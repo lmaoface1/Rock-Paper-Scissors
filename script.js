@@ -1,56 +1,55 @@
+const container = document.querySelector("#container");
+const scoreDiv = document.querySelector("#score");
+const resultsDiv = document.querySelector("#results");
+const humanChoiceDiv = document.querySelector("#humanChoice");
+const computerChoiceDiv = document.querySelector("#computerChoice");
+
 let computerScore = 0;
 let humanScore = 0;
 
-// Computer's Choice
-const getComputerChoice = () => {
-  const computerChoice = Math.random();
+container.addEventListener("click", (e) => {
+  const btn = e.target.closest("button");
 
-  if (computerChoice <= 1 / 3) {
-    return "rock";
-  } else if (computerChoice <= 2 / 3 && computerChoice >= 1 / 3) {
-    return "paper";
-  } else {
-    return "scissors";
-  }
-};
+  if (!btn) return;
 
-// Human's Choice
-const getHumanChoice = () => {
-  const input = prompt("rock, paper, or scissors?");
-  const humanChoice = input.toLowerCase();
-  return humanChoice;
-};
-// Play a Round
-const playRound = (computerChoice, humanChoice) => {
-  computerChoice = getComputerChoice();
-  humanChoice = getHumanChoice();
-  result = "";
+  resultsDiv.textContent = "";
 
-  if (computerChoice === humanChoice) {
-    result = "It's a Tie!";
+  const humanChoice = btn.id;
+
+  const choices = ["rock", "paper", "scissors"];
+  const computerChoice = choices[Math.floor(Math.random() * 3)];
+
+  humanChoiceDiv.textContent = `Human: ${humanChoice}`;
+  computerChoiceDiv.textContent = `Computer: ${computerChoice}`;
+
+  playRound(humanChoice, computerChoice);
+});
+
+const playRound = (humanChoice, computerChoice) => {
+  let result = "";
+  if (humanChoice === computerChoice) {
+    result = " It's a tie!";
   } else if (
-    (computerChoice === "rock" && humanChoice === "scissors") ||
-    (computerChoice === "paper" && humanChoice === "rock") ||
-    (computerChoice === "scissors" && humanChoice === "paper")
+    (humanChoice === "rock" && computerChoice === "scissors") ||
+    (humanChoice === "paper" && computerChoice === "rock") ||
+    (humanChoice === "scissors" && computerChoice === "paper")
   ) {
-    result = "You Lose!";
-    computerScore++;
-  } else {
-    result = "You Win!";
+    result = " Human wins!";
     humanScore++;
+  } else {
+    result = " Computer wins!";
+    computerScore++;
   }
+  scoreDiv.textContent = ` ${result} | Score: Human ${humanScore} - Computer ${computerScore}`;
 
-  console.log(`Computer's Choice: ${computerChoice}`);
-  console.log(`Human's Choice: ${humanChoice}`);
-  console.log(
-    `${result} Score: Computer: ${computerScore} Human: ${humanScore}`,
-  );
-};
-// Play 5 rounds of the game and keep score
-const playGame = () => {
-  for (let i = 0; i < 5; i++) {
-    playRound();
+  if (humanScore === 5 || computerScore === 5) {
+    announceWinner();
   }
 };
 
-playGame();
+const announceWinner = () => {
+  const winner = humanScore === 5 ? "Human" : "Computer";
+  resultsDiv.textContent = `${winner} wins the game!`;
+  humanScore = 0;
+  computerScore = 0;
+};
